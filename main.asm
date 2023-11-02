@@ -5,8 +5,8 @@
     getin=$ffe4
     plot=$fff0
     
-    INPUT_BUFFER = $1000
-    CUSTOM_STACK = $3000
+    INPUT_BUFFER = $4000
+    CUSTOM_STACK = $5000
     CUSTOM_SP = $f7
     
     ; 0 - Show
