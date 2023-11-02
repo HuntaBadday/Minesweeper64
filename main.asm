@@ -1,5 +1,9 @@
     *=$8000
     
+    chrin=$ffcf
+    getin=$ffe4
+    plot=$fff0
+    
     INPUT_BUFFER = $1000
     CUSTOM_STACK = $3000
     CUSTOM_SP = $f7
@@ -13,7 +17,7 @@
     SCREEN = $0400
     
     jmp init
-.include "../lib/kernal.asm"
+    
 init
     ; Setup IRQ (Currently isn't needed)
     ;sei
