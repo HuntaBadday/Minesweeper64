@@ -1,5 +1,6 @@
-    *=$8000
+    *=$0801
     
+    ; Kernal routines
     chrin=$ffcf
     getin=$ffe4
     plot=$fff0
@@ -17,7 +18,13 @@
     SCREEN = $0400
     COLORMEM = $d800
     
-    jmp init
+    ; Basic stub so the game can start by typing "RUN"
+    .word basicend
+	.word 6502
+	.byte $9e
+	.text "2061"
+basicend
+	.byte 0,0,0
     
 init
     lda #0
