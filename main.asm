@@ -15,17 +15,19 @@
     ; Real size = 40 * 20 (800, $320)
     BOARD_STATES = $2000
     SCREEN = $0400
+    COLORMEM = $d800
     
     jmp init
     
 init
-    ; Setup IRQ (Currently isn't needed)
-    ;sei
-    ;lda #<irq
-    ;ldx #>irq
-    ;sta $314
-    ;stx $315
-    ;cli
+    lda #0
+    sta rainbowText
+    sei
+    lda #<irq
+    ldx #>irq
+    sta $314
+    stx $315
+    cli
     
     ; Set border color to black
     lda #0
@@ -62,6 +64,9 @@ start
     lda #13
     jsr $ffd2
     
+    lda #$ff
+    sta rainbowText
+    
     ldx #<text_selectBombs
     ldy #>text_selectBombs
     jsr print
@@ -78,6 +83,9 @@ read
     lda #0
     sta INPUT_BUFFER,y
 .bend
+    
+    lda #0
+    sta rainbowText
     
 ; Clear the board
 clearBoard
@@ -852,9 +860,32 @@ correct_flags
 
 ; IRQ routine
 irq
-    ; Some debug code for the custom stack
-    ;lda CUSTOM_SP+1
-    ;sta $400
-    ;lda CUSTOM_SP
-    ;sta $401
+.block
+    ; Check if rainbow text is turned on
+    lda rainbowText
+    beq norainbow
+    ; Set the top line of characters to the next color
+    lda colorcounter
+    and #$1f
+    tax
+    lda colorpattern,x
+    ldy #39
+colorloop
+    sta COLORMEM,y
+    dey
+    bpl colorloop
+    inc colorcounter
+norainbow
+    ; Continue to normal irq routine
     jmp $ea31
+    
+    ; Colors sorted by brightness
+colorpattern
+    .byte $0,$6,$9,$2,$b,$4,$8,$c,$e,$5,$a,$3,$f,$7,$d,$1
+    .byte $1,$d,$7,$f,$3,$a,$5,$e,$c,$8,$4,$b,$2,$9,$6,$0
+    ; Counter to keep track of the current color
+colorcounter
+    .byte 0
+.bend
+rainbowText
+    .byte 0
